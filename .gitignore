@@ -1,0 +1,6 @@
+archivotemporal.txt
+archivotemportal.txt
+*.zip
+log/*.log
+images/*
+!images/puta.png
