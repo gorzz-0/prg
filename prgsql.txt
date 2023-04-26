@@ -1,0 +1,77 @@
+package conexionbbdd;
+
+import java.sql.*;
+import java.util.Calendar;
+import java.util.TimeZone;
+
+public class ConexionBBDD {
+
+    public static void main(String[] args) throws ClassNotFoundException, SQLException {
+        String BD = "Peliculas";
+        String USUARIO = "root";
+        String PASS = "";
+        String HOST = "localhost";
+
+        //cargar driver
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        //iniciar conexion
+        Calendar now = Calendar.getInstance();
+        TimeZone zonahoraria = now.getTimeZone();
+        Connection connection = (Connection) DriverManager.getConnection(
+                "jdbc:mysql://" + HOST + "/" + BD + "?user="
+                + USUARIO + "&password=" + PASS
+                + "&useLegacyDateTimeCode=false&serverTimezone="
+                + zonahoraria.getID());
+        //crear tabla
+        /*
+        PreparedStatement st = null;
+        try {
+            st = connection.prepareStatement("CREATE TABLE peliculas(nombre varchar(50)NOT NULL, year int(5),director varchar(20))");
+            st.execute();
+            st.close();
+        } catch (SQLException sqle) {
+            System.out.println("Error");
+        }
+         */
+        //ejecutar un insret
+        //insertValues("Tu puta madre", 2005, "James McTeigue");
+        selectValues(connection, "year");
+        deleteValues(connection, "puta");
+
+    }
+
+    public static void insertValues(Connection connection, String nombre, int año, String director) throws ClassNotFoundException, SQLException {
+
+        String consulta = "INSERT INTO peliculas VALUES('" + nombre + "','" + año + "','" + director + "')";
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.execute(consulta);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void selectValues(Connection connection, String orderby) throws SQLException, ClassNotFoundException {
+
+        String consulta = "SELECT * FROM peliculas ORDER BY " + orderby + "";
+        Statement stm = connection.createStatement();
+        ResultSet rset = stm.executeQuery(consulta);
+        //recorrer
+        while (rset.next()) {
+            String nombre = rset.getString("nombre");
+            int year = rset.getInt("year");
+            System.out.println(nombre + " " + year);
+        }
+    }
+
+    public static void deleteValues(Connection connection, String nombrepelicula) throws SQLException, ClassNotFoundException {
+
+        String consulta = "DELETE FROM peliculas where nombre='" + nombrepelicula + "';";
+        try {
+            Statement stmt = connection.createStatement();
+            stmt.executeUpdate(consulta);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
